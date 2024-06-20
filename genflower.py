@@ -10,21 +10,27 @@ def create_flower(petal_count = 30):
     flower_disk = cmds.polyCylinder(r=1, h=0.1, sx=petal_count, sy=1, sz=1, ax=(0, 1, 0), rcp=0, cuv=3, ch=1)[0]
     flower_petals = []
 
-    # create and shape petal
+    # create and shape petals
     petal = cmds.polyCube(w=0.8, h=0.1, d=0.2, sx=8, sy=1, name='petal')[0]
-    cmds.move(1, 0.2, 0, '{}.vtx[17]'.format(petal)) # left petal tip
-    cmds.move(1, 0.2, 0, '{}.vtx[26]'.format(petal)) # right petal tip
-    # segments creating petal curve
-    cmds.move(0.8, 0.16, 0.18, '{}.vtx[16]'.format(petal)) 
-    cmds.move(0.8, 0.16, -0.18, '{}.vtx[25]'.format(petal)) 
-    cmds.move(0.6, 0.15, 0.24, '{}.vtx[15]'.format(petal)) 
-    cmds.move(0.6, 0.15, -0.24, '{}.vtx[24]'.format(petal)) 
-    cmds.move(0.4, 0.17, 0.23, '{}.vtx[14]'.format(petal)) 
-    cmds.move(0.4, 0.17, -0.23, '{}.vtx[23]'.format(petal)) 
-    cmds.move(0.2, 0.15, 0.21, '{}.vtx[13]'.format(petal)) 
-    cmds.move(0.2, 0.15, -0.21, '{}.vtx[22]'.format(petal)) 
-    cmds.move(0.1, 0.13, 0.18, '{}.vtx[12]'.format(petal)) 
-    cmds.move(0.1, 0.13, -0.18, '{}.vtx[21]'.format(petal)) 
+    # position left vertices of petal 
+    petal_vertices_left = [
+        (0.1, 0.13, 0.18), (0.2, 0.15, 0.21), 
+        (0.4, 0.17, 0.23), (0.6, 0.15, 0.24),
+        (0.8, 0.16, 0.18), (1, 0.2, 0)
+    ]
+    for i in range(12, 18):
+        pos = petal_vertices_left[i - 12]
+        cmds.move(pos[0], pos[1], pos[2], '{}.vtx[{}]'.format(petal, i))
+    # position right vertices of petal
+    petal_vertices_right = [
+        (0.1, 0.13, -0.18), (0.2, 0.15, -0.21),
+        (0.4, 0.17, -0.23), (0.6, 0.15, -0.24),
+        (0.8, 0.16, -0.18), (1, 0.2, 0)
+    ]
+    for i in range(21, 27):
+        pos = petal_vertices_right[i - 21]
+        cmds.move(pos[0], pos[1], pos[2], '{}.vtx[{}]'.format(petal, i))
+
     cmds.select(clear=True)
 
     # calculate angle increment to evenly distribute petals around disk
