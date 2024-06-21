@@ -40,19 +40,20 @@ def create_flower(petal_count = 30):
     # calculate angle increment to evenly distribute petals around disk
     rotation_increment = 360 / petal_count
 
+    # place petals around flower disk
     for i in range(petal_count):
         angle = i * rotation_increment # calculate rotation angle for petal
 
         petal_instance = cmds.duplicate(petal)[0] # duplicate petal
         cmds.rotate(90, 0, 0, petal_instance) # lay petal flat
 
-        # position petal at edge of disk
+        # position petal at edge of flower disk
         radius = 1.3  
         x = radius * math.cos(math.radians(angle))
         z = radius * math.sin(math.radians(angle))
         cmds.move(x, 0, z, petal_instance)
 
-        # rotate petal to align with disk's face
+        # rotate petal to align with face of flower disk
         cmds.rotate(0, -angle, 0, petal_instance)
 
         # save petal to list
