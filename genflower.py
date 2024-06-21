@@ -2,6 +2,26 @@ from maya import cmds
 import math
 
 
+PETAL_VERTEX_POS = [
+        (0.1, 0.13, 0.18), (0.2, 0.15, 0.21), 
+        (0.4, 0.17, 0.23), (0.6, 0.15, 0.24),
+        (0.8, 0.16, 0.18), (1, 0.2, 0)
+    ]
+
+
+def move_vertices(petal, side, first_vertex, last_vertex):
+    for i in range(first_vertex, last_vertex + 1):
+        # create petal curvature on left
+        if side == 'L': 
+            pos = PETAL_VERTEX_POS[i - first_vertex]
+            cmds.move(pos[0], pos[1], pos[2], '{}.vtx[{}]'.format(petal, i))
+
+        # create petal curvature on right
+        elif side == 'R': 
+            pos = PETAL_VERTEX_POS[i - first_vertex]
+            cmds.move(pos[0], pos[1], -pos[2], '{}.vtx[{}]'.format(petal, i))
+
+
 def create_flower(petal_count = 30):
     if petal_count <= 0:
         raise ValueError("petal_count must be greater than zero")
@@ -12,24 +32,8 @@ def create_flower(petal_count = 30):
 
     # create and shape petals
     petal = cmds.polyCube(w=0.8, h=0.1, d=0.2, sx=8, sy=1, name='petal')[0]
-    # position left vertices of petal 
-    petal_vertices_left = [
-        (0.1, 0.13, 0.18), (0.2, 0.15, 0.21), 
-        (0.4, 0.17, 0.23), (0.6, 0.15, 0.24),
-        (0.8, 0.16, 0.18), (1, 0.2, 0)
-    ]
-    for i in range(12, 18):
-        pos = petal_vertices_left[i - 12]
-        cmds.move(pos[0], pos[1], pos[2], '{}.vtx[{}]'.format(petal, i))
-    # position right vertices of petal
-    petal_vertices_right = [
-        (0.1, 0.13, -0.18), (0.2, 0.15, -0.21),
-        (0.4, 0.17, -0.23), (0.6, 0.15, -0.24),
-        (0.8, 0.16, -0.18), (1, 0.2, 0)
-    ]
-    for i in range(21, 27):
-        pos = petal_vertices_right[i - 21]
-        cmds.move(pos[0], pos[1], pos[2], '{}.vtx[{}]'.format(petal, i))
+    move_vertices(petal, 'L', 12, 17)
+    move_vertices(petal, 'R', 21, 26)
 
     cmds.select(clear=True)
 
