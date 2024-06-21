@@ -63,4 +63,3 @@ def create_flower(petal_count = 30):
     cmds.delete(petal)
 
     return flower_disk, flower_petals
-
