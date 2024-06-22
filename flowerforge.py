@@ -22,7 +22,7 @@ def move_vertices(petal, side, first_vertex, last_vertex):
             cmds.move(pos[0], pos[1], -pos[2], '{}.vtx[{}]'.format(petal, i))
 
 
-def create_flower(petal_count = 30):
+def create_flower(petal_count=30):
     if petal_count <= 0:
         raise ValueError("petal_count must be greater than zero")
 
@@ -34,8 +34,6 @@ def create_flower(petal_count = 30):
     petal = cmds.polyCube(w=0.8, h=0.1, d=0.2, sx=8, sy=1, name='petal')[0]
     move_vertices(petal, 'L', 12, 17)
     move_vertices(petal, 'R', 21, 26)
-
-    cmds.select(clear=True)
 
     # calculate angle increment to evenly distribute petals around disk
     rotation_increment = 360 / petal_count
@@ -62,4 +60,7 @@ def create_flower(petal_count = 30):
     # delete original petal used for duplication
     cmds.delete(petal)
 
+    # clear selection
+    cmds.select(clear=True)
+    
     return flower_disk, flower_petals
