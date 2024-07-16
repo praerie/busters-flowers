@@ -16,18 +16,16 @@ class Flower:
     SUNFLOWER = {
         'width': 1, 'height': 0.05, 'depth': 0.2,
         'subdiv-x': 8, 'subdiv-y': 1, 'subdiv-z': 1,
-        'radius': 0.8, 'petal_edge':  0.7
+        'radius': 0.8, 'petal_edge':  0.6
     }
 
     # DAISY = {}
     # ASTER = {}
 
-    def __init__(self, flower_type=None, base_petal_count=21):
-        if (flower_type is None):
-            flower_type = Flower.SUNFLOWER
+    def __init__(self, flower_type=Flower.SUNFLOWER, base_petal_count=21):
         self.flower_type = flower_type
         self.base_petal_count = base_petal_count
-        self.all_petals = []
+        self.all_petals = [] 
 
     def create_flower(self):
         """
@@ -53,7 +51,7 @@ class Flower:
 
         for layer_type, petal_count in zip(layer_types, petal_counts):
             # Create petal shape based on layer and flower type
-            petal_shape = self._create_petal(layer_type)
+            petal_shape = self._create_petal(layer_type) # layer_type is not currently being used in _create_petal
 
             # Arrange petals around disk for current layer type
             arranged_layer = self._arrange_petals(petal_shape, petal_count, layer_type)
@@ -100,7 +98,7 @@ class Flower:
         )[0]
 
         # Adjust disk position to align with petals
-        cmds.move(0, self.flower_type['height'] + 0.01, 0, disk)
+        cmds.move(0, self.flower_type['height'] + 0.08, 0, disk)
 
         return disk
 
@@ -161,14 +159,14 @@ class Flower:
         - left_vertices (list): list of vertex indices for left side
         - right_vertices (list): list of vertex indices for right side
         """
-        left_vertices = range(0, vertex_count // 2)
-        right_vertices = range(vertex_count // 2, vertex_count)
+        left_vertices = range(0, vertex_count // 2) # (start, halfway point - 1)
+        right_vertices = range(vertex_count // 2, vertex_count) # (halfway point, total - 1)
 
         return left_vertices, right_vertices
 
     def _transform_petal(self, petal, layer):
         """
-        Transforms given petal by scaling and tilting it based on flower and layer types.
+        Transforms given petal by scaling and tilting it based on layer type.
 
         Parameters:
         - petal (str): name of petal object in Maya
@@ -199,10 +197,10 @@ class Flower:
         for i in range(petal_count):
             angle = i * rotation_increment
             petal_instance = cmds.duplicate(petal)[0]
-            cmds.rotate(90, 0, 0, petal_instance) # Lay petal flat
+            cmds.rotate(0, -angle, 0, petal_instance) # Lay petal flat
 
-            # Transform petals with scale and tilt based on flower and layer types
-            self._transform_petal(petal_instance, layer)
+            # Transform petals with scale and tilt based on layer type
+            # self._transform_petal(petal_instance, layer)
 
             # Position petal at edge of flower disk
             radius = self.flower_type['petal_edge']
@@ -211,8 +209,8 @@ class Flower:
             y = 0 # Default
             cmds.move(x, y, z, petal_instance)
 
-            # Rotate petal to align with face of flower disk
-            cmds.rotate(0, -angle, 0, petal_instance)
+            # # Rotate petal to align with face of flower disk
+            # cmds.rotate(0, -angle, 0, petal_instance)
 
             # Save petal
             flower_petals.append(petal_instance)
