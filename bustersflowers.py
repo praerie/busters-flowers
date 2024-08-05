@@ -46,7 +46,7 @@ class Flower:
         print("Petal counts for layers - Base:", petal_base, ", Mid:", petal_mid, ", Inner:", petal_inner)
 
         # Create flower disk based on flower type and number of base petals
-        flower_disk = self._create_disk(self.base_petal_count)
+        flower_disk = self._create_disk()
         print("Created flower disk:", flower_disk)
 
         # Define layer types and corresponding petal counts
@@ -87,7 +87,7 @@ class Flower:
             
         raise ValueError(f"No matching layer set found for petal count: {base_petals}")
 
-    def _create_disk(self, petal_count):
+    def _create_disk(self):
         """
         Creates a flower disk based on flower type and number of petals.
 
@@ -98,13 +98,16 @@ class Flower:
         Returns:
         - disk (str): name of the created flower disk object in Maya
         """
-        print("Creating disk with petal count:", petal_count)
-        
-        disk = cmds.polyCylinder(
-            r=self.flower_type['radius'], h=self.flower_type['height'],
-            sx=petal_count, sy=1, sz=1, 
-            ax=(0, 1, 0), rcp=0, cuv=3, ch=1
+        print("Creating spherical disk")
+
+        disk = cmds.polySphere(
+            radius=self.flower_type['radius'], 
+            subdivisionsX=20, subdivisionsY=10, 
+            name='flowerDisk'
         )[0]
+
+        # Flatten along the y-axis 
+        cmds.scale(1, 0.12, 1, disk)
 
         # Adjust disk position to align with petals
         cmds.move(0, self.flower_type['height'] + 0.08, 0, disk)
